@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  profiles:
+    active: local
+  flyway:
+    enabled: true
+    locations: db.migration
+#    baseline-on-migrate: true
+    cleanDisabled: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG

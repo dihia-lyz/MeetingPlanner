@@ -1,0 +1,2 @@
+alter table meeting_type_equipment
+add constraint meeting_type_equipment_pkey primary key(meeting_type_id,equipment_id);
