@@ -5,7 +5,7 @@
 
 {
     "meetingTypeId": 1,
-    "meetingDate": "2024-01-08",
+    "meetingDate": "08/01/2024",
     "collaboratorsNumber": 6,
     "startHour":9,
     "endHour":10
