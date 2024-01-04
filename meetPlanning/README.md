@@ -10,3 +10,9 @@
     "startHour":9,
     "endHour":10
 }
+
+#### où: 
+VC a meetingTypeId = 1, 
+SPEC a meetingTypeId = 2, 
+RS a meetingTypeId = 3,  
+RC a meetingTypeId = 4
