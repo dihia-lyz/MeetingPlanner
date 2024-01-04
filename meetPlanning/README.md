@@ -1,5 +1,5 @@
 # Commandes pour le demarrage de l'application:
-    `docker-compose up -d`
+    docker-compose up -d
 
 # Exemple de l'objet JSON a envoyer a partir du Front end:
 
