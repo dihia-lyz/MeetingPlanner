@@ -1,25 +1,33 @@
 package com.canalPlus.meetPlanning.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class RemovableEquipment {
-    @Id
-    private Long id;
-    @Column
-    private String name;
+public class RemovableEquipment extends Equipment {
     @Column
     private int equipmentNumber;
     @Column
     private int reservedNumber;
+
+    @ManyToMany(mappedBy = "equipments")
+    @JsonIgnore
+    private List<Reservation> reservations;
+
+    @Override
+    public String toString(){
+        return "RemovableEquipment : "+this.getId()+"  equipmentNumber: "+ this.equipmentNumber;
+    }
 }

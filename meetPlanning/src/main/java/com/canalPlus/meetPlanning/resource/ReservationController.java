@@ -1,7 +1,6 @@
 package com.canalPlus.meetPlanning.resource;
 
 import com.canalPlus.meetPlanning.dto.meeting.MeetingInDto;
-import com.canalPlus.meetPlanning.model.Salle;
 import com.canalPlus.meetPlanning.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

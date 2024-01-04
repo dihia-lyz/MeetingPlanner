@@ -1,13 +1,12 @@
 package com.canalPlus.meetPlanning.reservation;
 
 import com.canalPlus.meetPlanning.dto.meeting.MeetingInDto;
-import com.canalPlus.meetPlanning.model.Salle;
+import com.canalPlus.meetPlanning.model.Room;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,28 +16,27 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=7000"})
 @ActiveProfiles("test")
 @Slf4j
 public class ReservationTest {
 
     @LocalServerPort
-    private int PORT;
+    private static int PORT = 7000;
 
     private final TestRestTemplate restTemplate;
-
+    private static String apiUrl;
     @Autowired
     private final Flyway flyway;
 
     @Autowired
     public ReservationTest(TestRestTemplate restTemplate, Flyway flyway) {
         this.restTemplate = restTemplate;
-        this.flyway= flyway;
+        this.flyway = flyway;
     }
 
     @BeforeAll
@@ -47,33 +45,89 @@ public class ReservationTest {
         flyway.migrate();
     }
 
-    @Test
-    public void itShouldCreateReservationWithRoom1() {
-        log.info("test 1");
+    @BeforeAll
+    public static void initApiUrl() {
+        apiUrl = "http://localhost:" + PORT + "/api/v1/reservation";
+    }
 
+    @Test
+    void itShouldCreateReservationWithRoomE3001() {
         //GIVEN
-        MeetingInDto meetingInDto = MeetingInDto.builder()
-                .meetingTypeId(1L)
-                .meetingDate("2024/1/8")
-                .collaboratorsNumber(8)
-                .startHour("9")
-                .endHour("10")
-                .build();
+        MeetingInDto meetingInDto = MeetingInDto.builder().meetingTypeId(1L).meetingDate("2024-01-08").collaboratorsNumber(8).startHour("9").endHour("10").build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<MeetingInDto> requestEntity = new HttpEntity<>(meetingInDto, headers);
 
-//        Reservation reservation =
-
         //WHEN
+        ResponseEntity<Room> response = restTemplate.postForEntity(apiUrl, requestEntity, Room.class);
 
-        ResponseEntity<Salle> response = restTemplate.postForEntity("http://localhost:" + PORT + "/api/v1/reservation", requestEntity, Salle.class);
         //THEN
-        assertEquals(response.getBody().getName(), "E3001");
-
-
+        assertEquals("E3001", response.getBody().getName());
+        assertEquals(13, response.getBody().getCapacity());
     }
 
+
+    @Test
+    void itShouldCreateReservationWithRoomE3003() {
+
+        MeetingInDto meetingInDto = MeetingInDto.builder().meetingTypeId(1L).meetingDate("2024-01-08").collaboratorsNumber(6).startHour("9").endHour("10").build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<MeetingInDto> request = new HttpEntity<>(meetingInDto, headers);
+
+        ResponseEntity<Room> response = restTemplate.postForEntity(apiUrl, request, Room.class);
+
+        assertEquals("E3003", response.getBody().getName());
+        assertEquals(9, response.getBody().getCapacity());
+    }
+
+    @Test
+    void itShouldCreateReservationWithRoomE2003() {
+
+        MeetingInDto meetingInDto = MeetingInDto.builder().meetingTypeId(1L).meetingDate("2024-01-08").collaboratorsNumber(4).startHour("11").endHour("12").build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<MeetingInDto> request = new HttpEntity<>(meetingInDto, headers);
+
+        ResponseEntity<Room> response = restTemplate.postForEntity(apiUrl, request, Room.class);
+
+        assertEquals("E2003", response.getBody().getName());
+        assertEquals(7, response.getBody().getCapacity());
+    }
+
+    @Test
+    void itShouldNotCreateReservationWithRsMeetingAndTwoCollaborators() {
+
+        MeetingInDto meetingInDto = MeetingInDto.builder().meetingTypeId(3L).meetingDate("2024-01-08").collaboratorsNumber(2).startHour("11").endHour("12").build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<MeetingInDto> request = new HttpEntity<>(meetingInDto, headers);
+
+        ResponseEntity<Room> response = restTemplate.postForEntity(apiUrl, request, Room.class);
+
+        assertEquals(null, response.getBody().getName());
+    }
+
+    @Test
+    void itShouldCreateReservationAt11HWithRoomE3001() {
+
+        MeetingInDto meetingInDto = MeetingInDto.builder().meetingTypeId(2L).meetingDate("2024-01-08").collaboratorsNumber(9).startHour("11").endHour("12").build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<MeetingInDto> request = new HttpEntity<>(meetingInDto, headers);
+
+        ResponseEntity<Room> response = restTemplate.postForEntity(apiUrl, request, Room.class);
+
+        assertEquals("E3001", response.getBody().getName());
+    }
 }

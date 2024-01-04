@@ -1,10 +1,10 @@
-create TABLE if NOT EXISTS salle (
-    id bigint PRIMARY KEY,
+create TABLE if NOT EXISTS room (
+    id BIGSERIAL PRIMARY KEY,
     name varchar,
     capacity int
 );
 
-insert into salle (id,capacity,name) values
+insert into room (id,capacity,name) values
 	 (1,23,'E1001'),
      (2,10,'E1002'),
      (3,8,'E1003'),

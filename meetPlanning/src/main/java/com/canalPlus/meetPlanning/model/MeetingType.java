@@ -1,10 +1,10 @@
 package com.canalPlus.meetPlanning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.ToString.Exclude;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 public class MeetingType {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
     private String name;
@@ -24,6 +25,7 @@ public class MeetingType {
     private int minCollaboratorsNumber;
 
     @OneToMany(mappedBy = "meetingType")
+    @JsonIgnore
     List<Meeting> meetings;
 
     @ManyToMany
@@ -32,5 +34,11 @@ public class MeetingType {
             joinColumns = @JoinColumn(name = "meeting_type_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id")
     )
-    List<FixedEquipment> equipments;
+    @JsonIgnore
+    List<Equipment> equipments;
+
+    @Override
+    public String toString() {
+        return "EntityA{id=" + id + ", name=" + name + "minCollaboratorsNumber=" + minCollaboratorsNumber + "}";
+    }
 }

@@ -1,5 +1,5 @@
 create table if not exists meeting(
-    id bigint primary key,
+    id BIGSERIAL primary key,
     meeting_type_id bigint,
     collaborators_number int,
     start_hour int,

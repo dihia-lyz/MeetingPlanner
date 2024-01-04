@@ -14,8 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Salle {
+public class Room {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
     private String name;
@@ -24,8 +25,8 @@ public class Salle {
 
     @ManyToMany
     @JoinTable(
-            name = "salle_equipment",
-            joinColumns = @JoinColumn(name = "salle_id"),
+            name = "room_equipment",
+            joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id"))
     List<FixedEquipment> equipments;
 

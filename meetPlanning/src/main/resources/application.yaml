@@ -14,8 +14,9 @@ spring:
 #    baseline-on-migrate: true
     cleanDisabled: false
 
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+

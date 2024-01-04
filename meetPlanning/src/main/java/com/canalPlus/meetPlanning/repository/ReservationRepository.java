@@ -1,12 +1,14 @@
 package com.canalPlus.meetPlanning.repository;
 
+import com.canalPlus.meetPlanning.model.FixedEquipment;
 import com.canalPlus.meetPlanning.model.Reservation;
-import com.canalPlus.meetPlanning.model.Salle;
-import org.apache.el.parser.BooleanNode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -15,11 +17,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             SELECT
                 CASE
                     WHEN EXISTS (
-                        SELECT r.salle.id
+                        SELECT r.room.id
                         FROM Reservation r
                         JOIN Meeting m
                         on m.id = r.meeting.id
-                        WHERE r.salle.id = :salle_id
+                        WHERE r.room.id = :room_id
                         AND m.meetingDate =  CAST(:date AS date)
                         And m.startHour <= :startHour
                         AND :startHour < (m.endHour + :interval)
@@ -28,7 +30,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 end
             """)
     int isAlreadyReserved(
-            @Param("salle_id") Long salle_id,
+            @Param("room_id") Long room_id,
             @Param("date") String date,
             @Param("startHour") int startHour,
             @Param("interval") int interval);
