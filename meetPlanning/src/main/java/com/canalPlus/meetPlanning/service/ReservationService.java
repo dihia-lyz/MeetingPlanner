@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.swing.tree.ExpandVetoException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -55,7 +56,7 @@ public class ReservationService {
 
         //if SRMeeting has under 3 collaborators then don't reserve any room
         if (meetingInDto.getMeetingTypeId() == 3 && !isValideRSMeeting(meetingInDto)) {
-            return new Room();
+            throw new Exception("Votre reunion ne necessite pas une salle");
         }
 
         List<Equipment> requiredEquipment = meetingTypeRepository.findEquipmentsById(meetingInDto.getMeetingTypeId());
@@ -72,7 +73,7 @@ public class ReservationService {
             throw new Exception("Toutes les salles sont reservees pour cet horaire !");
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         Meeting meeting = Meeting.builder()
                 .meetingDate(LocalDate.parse(meetingInDto.getMeetingDate(), formatter))
@@ -94,7 +95,6 @@ public class ReservationService {
         }
 
         //if there is required equipments
-        Room roomtoReserve;
         for (Room r : notReservedRooms) {
 
             //get required equipments list
@@ -105,7 +105,7 @@ public class ReservationService {
 
             //if room has all the required equipments then reserve it
             if (hasAllEquipments) {
-                roomtoReserve = Room.builder()
+                Room roomtoReserve = Room.builder()
                         .id(r.getId())
                         .name(r.getName())
                         .capacity(r.getCapacity())
@@ -127,7 +127,7 @@ public class ReservationService {
 
                 //if equipments are available (not reserved) then reserve them
                 if (equipmentsAreAvailable(missedElements, meetingInDto.getMeetingDate(), Integer.parseInt(meetingInDto.getStartHour()))) {
-                    roomtoReserve = Room.builder()
+                    Room roomtoReserve = Room.builder()
                             .id(r.getId())
                             .name(r.getName())
                             .capacity(r.getCapacity())
@@ -155,7 +155,7 @@ public class ReservationService {
             }
         }
         //No room was reserved
-        return new Room();
+        throw new Exception("Les equipements requis par votre reunions sont deja reserves");
     }
 
 
@@ -170,7 +170,7 @@ public class ReservationService {
     }
 
     private List<Room> filterAndSortRoomsByPlacesNumber(List<Room> rooms, int requiredNumber, List<Equipment> requiredEquipment) {
-        log.info("Start filterinf rooms by places number and equipments");
+        log.info("Start filtering rooms by places number and equipments");
         return rooms.stream().filter(s -> requiredNumber <= s.getCapacity() * CAPACITY_PERCENT)
                 .sorted(Comparator.comparingDouble(s -> {
                     double capacityDiff = Math.abs(s.getCapacity() * CAPACITY_PERCENT - requiredNumber);

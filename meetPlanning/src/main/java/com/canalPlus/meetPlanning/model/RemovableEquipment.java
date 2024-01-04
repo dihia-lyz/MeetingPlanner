@@ -19,8 +19,6 @@ import java.util.Set;
 public class RemovableEquipment extends Equipment {
     @Column
     private int equipmentNumber;
-    @Column
-    private int reservedNumber;
 
     @ManyToMany(mappedBy = "equipments")
     @JsonIgnore

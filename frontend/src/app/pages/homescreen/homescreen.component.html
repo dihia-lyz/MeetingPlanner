@@ -1,0 +1,73 @@
+<div class="container p-5 d-flex justify-content-center">
+  <div class="centered-box">
+    <form [formGroup]="reserveRoomForm" (ngSubmit)="submitReservation()">
+      <div class="form-group mb-3">
+        <label for="meetingTypeId" class="label">Date de réunion</label>
+        <div class="p-0 d-block">
+          <mat-form-field
+            class="m-0 d-block"
+            appearance="outline"
+            color="primary"
+          >
+            <input
+              matInput
+              [matDatepicker]="picker"
+              placeholder="Choose a date"
+              formControlName="meetingDate"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 form-group mb-3">
+          <label for="startHour" class="label">Heure de debut</label>
+          <input
+            type="number"
+            class="form-control py-2"
+            id="startHour"
+            formControlName="startHour"
+          />
+        </div>
+        <div class="col-md-6 form-group mb-3">
+          <label for="endHour" class="label">Heure de fin</label>
+          <input
+            type="number"
+            class="form-control py-2"
+            id="endHour"
+            readonly
+            formControlName="endHour"
+          />
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="meetingTypeId" class="label">Type de Réunion </label>
+        <div class="custom-select d-block">
+          <select formControlName="meetingTypeId">
+            <option *ngFor="let type of meetingTypes" [ngValue]="type.id">
+              {{ type.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group mb-4">
+        <label for="collaboratorsNumber" class="label"
+          >Nombre de participants</label
+        >
+        <input
+          type="number"
+          class="form-control py-2"
+          id="collaboratorsNumber"
+          formControlName="collaboratorsNumber"
+        />
+      </div>
+      <div class="w-100" type="submit">
+        <button class="btn btn-danger w-100 py-2">Reserver</button>
+      </div>
+    </form>
+  </div>
+</div>

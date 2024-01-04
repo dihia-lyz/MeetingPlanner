@@ -20,7 +20,7 @@ public interface RemovableEquipmentRepository extends JpaRepository<RemovableEqu
                                  JOIN er.reservations  
                                  JOIN meeting m
                             WHERE er.id = :idEquipment
-                              AND m.meetingDate = CAST(:date AS DATE)
+                              AND m.meetingDate = TO_DATE(:date, 'DD/MM/YYYY')
                               AND m.startHour = :startHour
                            ) = :equipmentNumber
                        ) THEN 1

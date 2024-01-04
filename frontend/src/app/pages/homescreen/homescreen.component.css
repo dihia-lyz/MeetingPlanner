@@ -1,0 +1,42 @@
+.centered-box {
+  width: 60%;
+  height: 100%;
+  background-color: #f1f1f1;
+  overflow: hidden;
+  padding: 25px;
+  padding-block: 35px;
+}
+
+.label {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.custom-select {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.custom-select select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.custom-select::before {
+  content: "\25BC";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #555;
+}

@@ -1,0 +1,24 @@
+<div class="container pt-5">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Salle</th>
+        <th scope="col">heure de debut</th>
+        <th scope="col">heure de fin</th>
+        <th scope="col">Date</th>
+        <th scope="col">Nombre de participants</th>
+        <th scope="col">capacite de salle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let room of rooms">
+        <th scope="row">{{ room.roomName }}</th>
+        <td>{{ room.startHour }}</td>
+        <td>{{ room.endHour }}</td>
+        <td>{{ room.meetingDate }}</td>
+        <td>{{ room.collaboratorsNumber }}</td>
+        <td>{{ room.capacity }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

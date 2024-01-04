@@ -22,12 +22,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                         JOIN Meeting m
                         on m.id = r.meeting.id
                         WHERE r.room.id = :room_id
-                        AND m.meetingDate =  CAST(:date AS date)
-                        And m.startHour <= :startHour
-                        AND :startHour < (m.endHour + :interval)
+                        AND m.meetingDate =  TO_DATE(:date, 'DD/MM/YYYY')
+                        And 
+                        ((m.startHour <= :startHour
+                        AND :startHour < (m.endHour + :interval))
+                        Or(
+                        :startHour = m.startHour -1
+                        ))
                     ) THEN 1
                     ELSE 0
-                end
+                end as result
             """)
     int isAlreadyReserved(
             @Param("room_id") Long room_id,
