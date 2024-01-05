@@ -50,6 +50,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>com.amazonaws.secretsmanager</groupId>
+			<artifactId>aws-secretsmanager-jdbc</artifactId>
+			<version>1.0.12</version>
+		</dependency>
     </dependencies>
 
 	<build>
