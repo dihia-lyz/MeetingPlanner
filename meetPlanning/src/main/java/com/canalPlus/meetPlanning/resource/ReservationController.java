@@ -23,7 +23,6 @@ public class ReservationController {
         try {
             return new ResponseEntity<>(reservationService.reserve(meetingInDto), HttpStatus.OK);
         }catch(Exception e){
-            log.info("errrrror");
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
