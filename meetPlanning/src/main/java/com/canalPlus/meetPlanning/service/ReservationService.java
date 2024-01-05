@@ -56,7 +56,7 @@ public class ReservationService {
 
         //if SRMeeting has under 3 collaborators then don't reserve any room
         if (meetingInDto.getMeetingTypeId() == 3 && !isValideRSMeeting(meetingInDto)) {
-            throw new Exception("Votre reunion ne necessite pas une salle");
+            throw new Exception("votre reunion ne necessite pas une salle");
         }
 
         List<Equipment> requiredEquipment = meetingTypeRepository.findEquipmentsById(meetingInDto.getMeetingTypeId());
