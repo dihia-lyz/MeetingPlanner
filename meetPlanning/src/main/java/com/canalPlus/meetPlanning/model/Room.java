@@ -1,11 +1,9 @@
 package com.canalPlus.meetPlanning.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -24,6 +22,8 @@ public class Room {
     private int capacity;
 
     @ManyToMany
+//    @ToString.Exclude
+//    @JsonIgnore
     @JoinTable(
             name = "room_equipment",
             joinColumns = @JoinColumn(name = "room_id"),
@@ -31,7 +31,7 @@ public class Room {
     List<FixedEquipment> equipments;
 
     public List<FixedEquipment> getEquipments() {
-        return equipments;
+        return this.equipments;
     }
 
 }

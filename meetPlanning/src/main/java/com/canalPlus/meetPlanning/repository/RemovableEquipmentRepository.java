@@ -17,9 +17,9 @@ public interface RemovableEquipmentRepository extends JpaRepository<RemovableEqu
                        WHEN (
                            (SELECT COUNT(er)
                             FROM RemovableEquipment er
-                                 JOIN er.reservations  
-                                 JOIN meeting m
-                            WHERE er.id = :idEquipment
+                                JOIN er.reservations r
+                                JOIN r.meeting m
+                           WHERE er.id = :idEquipment
                               AND m.meetingDate = TO_DATE(:date, 'DD/MM/YYYY')
                               AND m.startHour = :startHour
                            ) = :equipmentNumber

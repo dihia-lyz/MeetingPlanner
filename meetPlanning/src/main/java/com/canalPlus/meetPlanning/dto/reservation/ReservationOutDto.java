@@ -1,4 +1,4 @@
-package com.canalPlus.meetPlanning.dto.room;
+package com.canalPlus.meetPlanning.dto.reservation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoomOutDto {
+public class ReservationOutDto {
     private String roomName;
     private int startHour;
     private int endHour;

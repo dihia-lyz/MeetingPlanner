@@ -1,6 +1,7 @@
 package com.canalPlus.meetPlanning.service;
 
 import com.canalPlus.meetPlanning.dto.meeting.MeetingInDto;
+import com.canalPlus.meetPlanning.dto.reservation.ReservationOutDto;
 import com.canalPlus.meetPlanning.model.*;
 import com.canalPlus.meetPlanning.repository.*;
 import jakarta.persistence.EntityManager;
@@ -8,10 +9,12 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.tree.ExpandVetoException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.canalPlus.meetPlanning.utils.Constants.*;
@@ -43,6 +46,9 @@ public class ReservationService {
         this.entityManager = entityManager;
     }
 
+    public List<ReservationOutDto> getAll(){
+        return reservationRepository.findAllReservations();
+    }
     @Transactional
     public Room reserve(MeetingInDto meetingInDto) throws Exception {
 
@@ -50,6 +56,7 @@ public class ReservationService {
         List<Room> sortedRoomsByPlacesNumber;
         List<Room> notReservedRooms;
 
+        log.info("all rooms {}" , rooms);
         if (!areValideMeetingHours(meetingInDto)) {
             throw new Exception("Les horaires de votre reunions ne sont pas valides");
         }
@@ -96,12 +103,7 @@ public class ReservationService {
 
         //if there is required equipments
         for (Room r : notReservedRooms) {
-
-            //get required equipments list
-            boolean hasAllEquipments = r.getEquipments().stream()
-                    .map(Equipment.class::cast)
-                    .collect(Collectors.toList())
-                    .containsAll(requiredEquipment);
+            boolean hasAllEquipments = r.getEquipments().size() == requiredEquipment.size();
 
             //if room has all the required equipments then reserve it
             if (hasAllEquipments) {
@@ -117,11 +119,16 @@ public class ReservationService {
                 reservationRepository.save(reservation);
                 return roomtoReserve;
             } else {
-                //if room has missed equipments then reserve the quipment
 
-                //get missed equipments
+//                if room has missed equipments then reserve the quipment
+//                get missed equipments
                 List<Equipment> missedElements = requiredEquipment.stream()
-                        .filter(element -> !r.getEquipments().contains(element))
+                        .map(equipment -> Equipment.builder().id(equipment.getId()).name(equipment.getName()).build())
+                        .filter(element -> !r.getEquipments()
+                                .stream()
+                                .map(equipment -> Equipment.builder().id(equipment.getId()).name(equipment.getName()).build())
+                                .collect(Collectors.toList())
+                                .contains(element))
                         .map(equipment -> Equipment.builder().id(equipment.getId()).name(equipment.getName()).build())
                         .collect(Collectors.toList());
 
@@ -169,26 +176,37 @@ public class ReservationService {
                 .getMinCollaboratorsNumber();
     }
 
-    private List<Room> filterAndSortRoomsByPlacesNumber(List<Room> rooms, int requiredNumber, List<Equipment> requiredEquipment) {
+    private List<Room> filterAndSortRoomsByPlacesNumber(List<Room> rooms, int requiredNumber, List<
+            Equipment> requiredEquipment) {
         log.info("Start filtering rooms by places number and equipments");
+
         return rooms.stream().filter(s -> requiredNumber <= s.getCapacity() * CAPACITY_PERCENT)
                 .sorted(Comparator.comparingDouble(s -> {
-                    double capacityDiff = Math.abs(s.getCapacity() * CAPACITY_PERCENT - requiredNumber);
-                    //get room with minimum equipments
-                    if (requiredEquipment.isEmpty()) {
-                        int nbrEquipment = s.getEquipments().size();
-                        return capacityDiff + nbrEquipment * 0.001;
+                            double capacityDiff = Math.abs(s.getCapacity() * CAPACITY_PERCENT - requiredNumber);
+                            //get room with minimum equipments
+                            if (requiredEquipment.isEmpty()) {
+                                int nbrEquipment = s.getEquipments().size();
+                                return capacityDiff + nbrEquipment * 0.001;
 
-                    } else {
-                        //get the room with maximum of commun equipments with the required ones
-                        long commonElements = s.getEquipments().stream()
-                                .map(e -> equipmentRepository.findById(e.getId()).get())
-                                .filter(roomEquipment -> requiredEquipment.stream()
-                                        .anyMatch(required -> Objects.equals(roomEquipment, required)))
-                                .count();
-                        return capacityDiff - commonElements * 0.001;
-                    }
-                }))
+                            } else {
+                                entityManager.clear();
+                                //get the room with maximum of commun equipments with the required ones
+                                List<Equipment> required = requiredEquipment.stream()
+                                        .map(equipment -> Equipment.builder().name(equipment.getName()).id(equipment.getId()).build())
+                                        .collect(Collectors.toList());
+
+                                List<Equipment> equipments = s.getEquipments().stream()
+                                        .map(equip -> Equipment.builder().name(equip.getName()).id(equip.getId()).build())
+                                        .collect(Collectors.toList());
+
+                                long commonElements = equipments.stream()
+                                        .filter(required::contains)
+                                        .toList().size();
+
+                                return capacityDiff - commonElements * 0.001;
+                            }
+                        }
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -211,6 +229,7 @@ public class ReservationService {
         for (Equipment equipment : missedElements) {
             entityManager.clear();
             Optional<RemovableEquipment> removableEquipment = removableEquipmentRepository.findById(equipment.getId());
+//            log.info("removable equip {}", removableEquipment);
             // pas d'equipement amovible pour ce materiel manquant
             // ou cet equipement est reservee
             if (removableEquipment.isEmpty()

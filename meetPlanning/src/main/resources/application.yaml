@@ -7,7 +7,7 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
 #    show-sql: true
   profiles:
-    active: int
+    active: local
   flyway:
     enabled: true
     locations: db.migration

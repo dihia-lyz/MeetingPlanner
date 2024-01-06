@@ -28,4 +28,8 @@ public class RemovableEquipment extends Equipment {
     public String toString(){
         return "RemovableEquipment : "+this.getId()+"  equipmentNumber: "+ this.equipmentNumber;
     }
+
+    public List<Reservation> getReservations(){
+        return this.reservations;
+    }
 }

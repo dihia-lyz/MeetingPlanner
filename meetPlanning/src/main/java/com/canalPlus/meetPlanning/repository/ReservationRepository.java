@@ -1,6 +1,6 @@
 package com.canalPlus.meetPlanning.repository;
 
-import com.canalPlus.meetPlanning.model.FixedEquipment;
+import com.canalPlus.meetPlanning.dto.reservation.ReservationOutDto;
 import com.canalPlus.meetPlanning.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +38,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("date") String date,
             @Param("startHour") int startHour,
             @Param("interval") int interval);
+
+    @Query("""
+            select new com.canalPlus.meetPlanning.dto.reservation.ReservationOutDto( rm.name , m.startHour , m.endHour, m.meetingDate , m.collaboratorsNumber , rm.capacity) 
+            from Reservation r
+            join Meeting m
+            on m.id = r.meeting.id
+            join Room rm
+            on rm.id = r.room.id
+            """)
+    List<ReservationOutDto> findAllReservations();
 }

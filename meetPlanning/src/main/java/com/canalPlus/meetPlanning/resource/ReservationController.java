@@ -27,4 +27,9 @@ public class ReservationController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        return new ResponseEntity<>(reservationService.getAll(), HttpStatus.OK);
+    }
+
 }
