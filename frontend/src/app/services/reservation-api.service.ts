@@ -18,6 +18,6 @@ export class ReservationApiService {
   }
 
   getRooms(): Observable<any> {
-    return this.http.get(`api/v1/rooms`);
+    return this.http.get(`api/v1/reservation`);
   }
 }
