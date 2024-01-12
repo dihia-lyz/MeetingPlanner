@@ -55,6 +55,11 @@
 			<artifactId>aws-secretsmanager-jdbc</artifactId>
 			<version>1.0.12</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.10</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -72,7 +77,13 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.0.2155</version>
+			</plugin>
 		</plugins>
 	</build>
+
 
 </project>
